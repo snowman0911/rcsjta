@@ -108,9 +108,8 @@ public class OptionsManager implements DiscoveryManager {
         if (sLogger.isActivated()) {
             sLogger.debug("Request capabilities in background for ".concat(contact.toString()));
         }
-        boolean richcall = mImsModule.getRichcallService().isCallConnectedWith(contact);
         OptionsRequestTask task = new OptionsRequestTask(mImsModule, contact,
-                CapabilityUtils.getSupportedFeatureTags(richcall, mRcsSettings), mRcsSettings,
+                CapabilityUtils.getSupportedFeatureTags(mRcsSettings), mRcsSettings,
                 mContactManager, listener);
         if (mThreadPool.isShutdown()) {
             if (sLogger.isActivated()) {
@@ -210,10 +209,10 @@ public class OptionsManager implements DiscoveryManager {
             // Create 200 OK response
             String ipAddress = mImsModule.getCurrentNetworkInterface().getNetworkAccess()
                     .getIpAddress();
-            boolean richcall = mImsModule.getRichcallService().isCallConnectedWith(contact);
+            boolean richcall = false;
             SipResponse resp = SipMessageFactory.create200OkOptionsResponse(options, mImsModule
                     .getSipManager().getSipStack().getContact(),
-                    CapabilityUtils.getSupportedFeatureTags(richcall, mRcsSettings),
+                    CapabilityUtils.getSupportedFeatureTags(mRcsSettings),
                     CapabilityUtils.buildSdp(ipAddress, richcall, mRcsSettings));
 
             // Send 200 OK response

@@ -24,7 +24,6 @@ package com.gsma.rcs.provider.settings;
 
 import com.gsma.rcs.core.ims.service.capability.Capabilities;
 import com.gsma.rcs.core.ims.service.capability.Capabilities.CapabilitiesBuilder;
-import com.gsma.rcs.core.ims.service.extension.ServiceExtensionManager;
 import com.gsma.rcs.core.ims.service.sip.EnrichCallingService;
 import com.gsma.rcs.provider.CursorUtil;
 import com.gsma.rcs.provider.LocalContentResolver;
@@ -771,22 +770,16 @@ public class RcsSettings {
         capaBuilder.setCsVideo(isCsVideoSupported());
         capaBuilder.setFileTransferMsrp(isFileTransferSupported());
         capaBuilder.setFileTransferHttp(isFileTransferHttpSupported());
-        capaBuilder.setImageSharing(isImageSharingSupported());
         capaBuilder.setImSession(isImSessionSupported());
         capaBuilder.setPresenceDiscovery(isPresenceDiscoverySupported());
         capaBuilder.setSocialPresence(isSocialPresenceSupported());
-        capaBuilder.setVideoSharing(isVideoSharingSupported());
-        capaBuilder.setGeolocationPush(isGeoLocationPushSupported());
         capaBuilder.setFileTransferThumbnail(isFileTransferThumbnailSupported());
         capaBuilder.setFileTransferStoreForward(isFileTransferStoreForwardSupported());
-        capaBuilder.setIpVoiceCall(isIPVoiceCallSupported());
-        capaBuilder.setIpVideoCall(isIPVideoCallSupported());
         capaBuilder.setGroupChatStoreForward(isGroupChatStoreForwardSupported());
         capaBuilder.setSipAutomata(isSipAutomata());
         capaBuilder.setTimestampOfLastRequest(Capabilities.INVALID_TIMESTAMP);
         capaBuilder.setTimestampOfLastResponse(Capabilities.INVALID_TIMESTAMP);
         /* Add extensions */
-        capaBuilder.setExtensions(getSupportedRcsExtensions());
         return capaBuilder.build();
     }
 
@@ -1465,26 +1458,6 @@ public class RcsSettings {
      */
     public boolean isGroupChatInviteIfFullStoreForwardSupported() {
         return readBoolean(RcsSettingsData.GROUP_CHAT_INVITE_ONLY_FULL_SF);
-    }
-
-    /**
-     * Get set of supported RCS extensions
-     *
-     * @return the set of extensions
-     */
-    public Set<String> getSupportedRcsExtensions() {
-        return ServiceExtensionManager
-                .getExtensions(readString(RcsSettingsData.CAPABILITY_RCS_EXTENSIONS));
-    }
-
-    /**
-     * Set the set of supported RCS extensions
-     *
-     * @param extensions Set of extensions
-     */
-    public void setSupportedRcsExtensions(Set<String> extensions) {
-        writeString(RcsSettingsData.CAPABILITY_RCS_EXTENSIONS,
-                ServiceExtensionManager.getExtensions(extensions));
     }
 
     /**

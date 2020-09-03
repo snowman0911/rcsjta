@@ -245,22 +245,6 @@ public class ImsServiceDispatcher extends Thread {
             sdp = sdp.toLowerCase();
             /* New incoming session invitation */
             if (isTagPresent(sdp, "msrp")
-                    && SipUtils.isFeatureTagPresent(request, FeatureTags.FEATURE_3GPP_VIDEO_SHARE)
-                    && (SipUtils.isFeatureTagPresent(request, FeatureTags.FEATURE_3GPP_IMAGE_SHARE) || SipUtils
-                            .isFeatureTagPresent(request, FeatureTags.FEATURE_3GPP_IMAGE_SHARE_RCS2))) {
-                if (mRcsSettings.isImageSharingSupported()) {
-                    if (logActivated) {
-                        sLogger.debug("Image content sharing transfer invitation");
-                    }
-                    mImsModule.getRichcallService().onImageSharingInvitationReceived(request,
-                            timestamp);
-                } else {
-                    if (logActivated) {
-                        sLogger.debug("Image share service not supported: automatically reject");
-                    }
-                    sendFinalResponse(request, Response.DECLINE);
-                }
-            } else if (isTagPresent(sdp, "msrp")
                     && SipUtils.isFeatureTagPresent(request, FeatureTags.FEATURE_OMA_IM)
                     && isTagPresent(sdp, "file-selector")) {
                 if (mRcsSettings.isFileTransferSupported()) {
@@ -345,60 +329,6 @@ public class ImsServiceDispatcher extends Thread {
                                 request, timestamp);
                     }
                 }
-            } else if (isTagPresent(sdp, "rtp")
-                    && SipUtils.isFeatureTagPresent(request, FeatureTags.FEATURE_3GPP_VIDEO_SHARE)) {
-                if (mRcsSettings.isVideoSharingSupported()) {
-                    if (logActivated) {
-                        sLogger.debug("Video content sharing streaming invitation");
-                    }
-                    mImsModule.getRichcallService().onVideoSharingInvitationReceived(request,
-                            timestamp);
-                } else {
-                    if (logActivated) {
-                        sLogger.debug("Video share service not supported: automatically reject");
-                    }
-                    sendFinalResponse(request, Response.DECLINE);
-                }
-            } else if (isTagPresent(sdp, "msrp")
-                    && SipUtils.isFeatureTagPresent(request, FeatureTags.FEATURE_3GPP_VIDEO_SHARE)
-                    && SipUtils.isFeatureTagPresent(request,
-                            FeatureTags.FEATURE_RCSE_GEOLOCATION_PUSH)) {
-                if (mRcsSettings.isGeoLocationPushSupported()) {
-                    if (logActivated) {
-                        sLogger.debug("Geoloc content sharing transfer invitation");
-                    }
-                    mImsModule.getRichcallService().onGeolocSharingInvitationReceived(request,
-                            timestamp);
-                } else {
-                    if (logActivated) {
-                        sLogger.debug("Geoloc share service not supported: automatically reject");
-                    }
-                    sendFinalResponse(request, Response.DECLINE);
-                }
-            } else if (SipUtils
-                    .isFeatureTagPresent(request, FeatureTags.FEATURE_RCSE_IP_VOICE_CALL)
-                    && SipUtils
-                            .isFeatureTagPresent(request, FeatureTags.FEATURE_3GPP_IP_VOICE_CALL)) {
-                // TODO: Add Ipcall support here in future releases
-                // Service not supported: reject the invitation with a 603 Decline
-                if (logActivated) {
-                    sLogger.debug("IP Voice call service not supported: automatically reject");
-                }
-                sendFinalResponse(request, Response.DECLINE);
-
-            } else if (SipUtils
-                    .isFeatureTagPresent(request, FeatureTags.FEATURE_RCSE_IP_VOICE_CALL)
-                    && SipUtils
-                            .isFeatureTagPresent(request, FeatureTags.FEATURE_3GPP_IP_VOICE_CALL)
-                    && SipUtils
-                            .isFeatureTagPresent(request, FeatureTags.FEATURE_RCSE_IP_VIDEO_CALL)) {
-                // TODO: Add Ipcall support here in future releases
-                // Service not supported: reject the invitation with a 603 Decline
-                if (logActivated) {
-                    sLogger.debug("IP video call service not supported: automatically reject");
-                }
-                sendFinalResponse(request, Response.DECLINE);
-
             } else {
                 Intent intent = mIntentMgr.isSipRequestResolved(request);
                 if (intent != null) {

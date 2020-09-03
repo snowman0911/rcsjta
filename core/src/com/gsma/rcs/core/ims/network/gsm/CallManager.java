@@ -188,9 +188,6 @@ public class CallManager {
                                 mMultipartyCall = false;
                                 mCallHold = false;
 
-                                /* Terminate richcall sessions */
-                                mImsModule.getRichcallService().terminateAllSessions();
-
                                 if (sContact == null) {
                                     return;
                                 }
@@ -373,8 +370,6 @@ public class CallManager {
      */
     private void callLegHasChanged() throws PayloadException, NetworkException {
         if (mMultipartyCall | mCallHold) {
-            /* Terminate richcall sessions if call hold or multiparty call */
-            mImsModule.getRichcallService().terminateAllSessions();
         }
         if (sContact != null) {
             requestCapabilities(sContact);

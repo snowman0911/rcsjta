@@ -93,8 +93,5 @@ public class ServerApiUtils {
         if (!isImsConnected()) {
             throw new ServerApiServiceNotRegisteredException("Core is not connected to IMS");
         }
-        if (!Core.getInstance().getImsModule().getExtensionManager().isExtensionAuthorized(ext)) {
-            throw new ServerApiPermissionDeniedException("Extension not authorized");
-        }
     }
 }

@@ -32,7 +32,6 @@ import com.gsma.rcs.core.ims.network.NetworkException;
 import com.gsma.rcs.core.ims.protocol.PayloadException;
 import com.gsma.rcs.core.ims.service.capability.CapabilityService;
 import com.gsma.rcs.core.ims.service.im.InstantMessagingService;
-import com.gsma.rcs.core.ims.service.richcall.RichcallService;
 import com.gsma.rcs.core.ims.service.sip.SipService;
 import com.gsma.rcs.platform.AndroidFactory;
 import com.gsma.rcs.platform.file.FileFactory;
@@ -42,17 +41,13 @@ import com.gsma.rcs.provider.contact.ContactManagerException;
 import com.gsma.rcs.provider.history.HistoryLog;
 import com.gsma.rcs.provider.messaging.MessagingLog;
 import com.gsma.rcs.provider.settings.RcsSettings;
-import com.gsma.rcs.provider.sharing.RichCallHistory;
 import com.gsma.rcs.service.api.CapabilityServiceImpl;
 import com.gsma.rcs.service.api.ChatServiceImpl;
 import com.gsma.rcs.service.api.ContactServiceImpl;
 import com.gsma.rcs.service.api.FileTransferServiceImpl;
 import com.gsma.rcs.service.api.FileUploadServiceImpl;
-import com.gsma.rcs.service.api.GeolocSharingServiceImpl;
 import com.gsma.rcs.service.api.HistoryServiceImpl;
-import com.gsma.rcs.service.api.ImageSharingServiceImpl;
 import com.gsma.rcs.service.api.MultimediaSessionServiceImpl;
-import com.gsma.rcs.service.api.VideoSharingServiceImpl;
 import com.gsma.rcs.utils.IntentUtils;
 import com.gsma.rcs.utils.logger.Logger;
 import com.gsma.services.rcs.RcsService;
@@ -107,12 +102,6 @@ public class RcsCoreService extends Service implements CoreListener {
 
     private FileTransferServiceImpl mFtApi;
 
-    private VideoSharingServiceImpl mVshApi;
-
-    private ImageSharingServiceImpl mIshApi;
-
-    private GeolocSharingServiceImpl mGshApi;
-
     private HistoryServiceImpl mHistoryApi;
 
     private MultimediaSessionServiceImpl mMmSessionApi;
@@ -134,8 +123,6 @@ public class RcsCoreService extends Service implements CoreListener {
 
     private MessagingLog mMessagingLog;
 
-    private RichCallHistory mRichCallHistory;
-
     private HistoryLog mHistoryLog;
 
     private ContactManager mContactManager;
@@ -156,7 +143,6 @@ public class RcsCoreService extends Service implements CoreListener {
         mLocalContentResolver = new LocalContentResolver(mContentResolver);
         mRcsSettings = RcsSettings.getInstance(mLocalContentResolver);
         mHistoryLog = HistoryLog.getInstance(mLocalContentResolver);
-        mRichCallHistory = RichCallHistory.getInstance(mLocalContentResolver);
         mMessagingLog = MessagingLog.getInstance(mLocalContentResolver, mRcsSettings);
         mContactManager = ContactManager.getInstance(mCtx, mContentResolver, mLocalContentResolver,
                 mRcsSettings);
@@ -277,11 +263,9 @@ public class RcsCoreService extends Service implements CoreListener {
         }
         try {
             core = Core.createCore(mCtx, this, mRcsSettings, mContentResolver,
-                    mLocalContentResolver, mContactManager, mMessagingLog, mHistoryLog,
-                    mRichCallHistory);
+                    mLocalContentResolver, mContactManager, mMessagingLog, mHistoryLog);
 
             InstantMessagingService imService = core.getImService();
-            RichcallService richCallService = core.getRichcallService();
             SipService sipService = core.getSipService();
             CapabilityService capabilityService = core.getCapabilityService();
 
@@ -292,9 +276,6 @@ public class RcsCoreService extends Service implements CoreListener {
                     mContactManager);
             mFtApi = new FileTransferServiceImpl(imService, mChatApi, mMessagingLog, mRcsSettings,
                     mContactManager, mCtx);
-            mVshApi = new VideoSharingServiceImpl(richCallService, mRichCallHistory, mRcsSettings);
-            mIshApi = new ImageSharingServiceImpl(richCallService, mRichCallHistory, mRcsSettings);
-            mGshApi = new GeolocSharingServiceImpl(richCallService, mRichCallHistory, mRcsSettings);
             mHistoryApi = new HistoryServiceImpl(mCtx);
             mMmSessionApi = new MultimediaSessionServiceImpl(sipService, mRcsSettings);
             mUploadApi = new FileUploadServiceImpl(imService, mRcsSettings);
@@ -402,18 +383,6 @@ public class RcsCoreService extends Service implements CoreListener {
             mChatApi.close();
             mChatApi = null;
         }
-        if (mIshApi != null) {
-            mIshApi.close();
-            mIshApi = null;
-        }
-        if (mGshApi != null) {
-            mGshApi.close();
-            mGshApi = null;
-        }
-        if (mVshApi != null) {
-            mVshApi.close();
-            mVshApi = null;
-        }
         if (mHistoryApi != null) {
             mHistoryApi.close();
             mHistoryApi = null;
@@ -462,21 +431,6 @@ public class RcsCoreService extends Service implements CoreListener {
                 sLogger.debug("Chat service API binding");
             }
             return mChatApi;
-        } else if (IVideoSharingService.class.getName().equals(intent.getAction())) {
-            if (sLogger.isActivated()) {
-                sLogger.debug("Video sharing service API binding");
-            }
-            return mVshApi;
-        } else if (IImageSharingService.class.getName().equals(intent.getAction())) {
-            if (sLogger.isActivated()) {
-                sLogger.debug("Image sharing service API binding");
-            }
-            return mIshApi;
-        } else if (IGeolocSharingService.class.getName().equals(intent.getAction())) {
-            if (sLogger.isActivated()) {
-                sLogger.debug("Geoloc sharing service API binding");
-            }
-            return mGshApi;
         } else if (IHistoryService.class.getName().equals(intent.getAction())) {
             if (sLogger.isActivated()) {
                 sLogger.debug("History service API binding");
@@ -515,15 +469,6 @@ public class RcsCoreService extends Service implements CoreListener {
         if (mFtApi != null) {
             mFtApi.notifyRegistration();
         }
-        if (mVshApi != null) {
-            mVshApi.notifyRegistration();
-        }
-        if (mIshApi != null) {
-            mIshApi.notifyRegistration();
-        }
-        if (mGshApi != null) {
-            mGshApi.notifyRegistration();
-        }
         if (mMmSessionApi != null) {
             mMmSessionApi.notifyRegistration();
         }
@@ -547,15 +492,6 @@ public class RcsCoreService extends Service implements CoreListener {
         if (mFtApi != null) {
             mFtApi.notifyUnRegistration(reason);
         }
-        if (mVshApi != null) {
-            mVshApi.notifyUnRegistration(reason);
-        }
-        if (mIshApi != null) {
-            mIshApi.notifyUnRegistration(reason);
-        }
-        if (mGshApi != null) {
-            mGshApi.notifyUnRegistration(reason);
-        }
         if (mMmSessionApi != null) {
             mMmSessionApi.notifyUnRegistration(reason);
         }
@@ -569,7 +505,6 @@ public class RcsCoreService extends Service implements CoreListener {
 
         Core core = Core.getInstance();
         core.getImService().onCoreLayerStarted();
-        core.getRichcallService().onCoreLayerStarted();
 
         IntentUtils.sendBroadcastEvent(mCtx, RcsService.ACTION_SERVICE_UP);
     }

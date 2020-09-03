@@ -39,11 +39,9 @@ import com.gsma.rcs.core.ims.service.ImsService.ImsServiceType;
 import com.gsma.rcs.core.ims.service.ImsServiceDispatcher;
 import com.gsma.rcs.core.ims.service.ImsServiceSession.TerminationReason;
 import com.gsma.rcs.core.ims.service.capability.CapabilityService;
-import com.gsma.rcs.core.ims.service.extension.ServiceExtensionManager;
 import com.gsma.rcs.core.ims.service.im.InstantMessagingService;
 import com.gsma.rcs.core.ims.service.im.filetransfer.http.HttpTransferManager;
 import com.gsma.rcs.core.ims.service.presence.PresenceService;
-import com.gsma.rcs.core.ims.service.richcall.RichcallService;
 import com.gsma.rcs.core.ims.service.sip.SipService;
 import com.gsma.rcs.core.ims.service.terms.TermsConditionsService;
 import com.gsma.rcs.core.ims.userprofile.UserProfile;
@@ -53,7 +51,6 @@ import com.gsma.rcs.provider.contact.ContactManagerException;
 import com.gsma.rcs.provider.history.HistoryLog;
 import com.gsma.rcs.provider.messaging.MessagingLog;
 import com.gsma.rcs.provider.settings.RcsSettings;
-import com.gsma.rcs.provider.sharing.RichCallHistory;
 import com.gsma.rcs.utils.logger.Logger;
 
 import android.content.Context;
@@ -81,8 +78,6 @@ public class ImsModule implements SipEventListener {
 
     private final CallManager mCallManager;
 
-    private final ServiceExtensionManager mExtensionManager;
-
     /**
      * flag to indicate whether instantiation is finished
      */
@@ -102,17 +97,15 @@ public class ImsModule implements SipEventListener {
      * @param contactManager Contact manager accessor
      * @param messagingLog Messaging log accessor
      * @param historyLog The history log accessor
-     * @param richCallHistory The rich call accessor
      * @param addressBookManager The address book manager instance
      */
     public ImsModule(Core core, Context ctx, LocalContentResolver localContentResolver,
             RcsSettings rcsSettings, ContactManager contactManager, MessagingLog messagingLog,
-            HistoryLog historyLog, RichCallHistory richCallHistory,
+            HistoryLog historyLog,
             AddressBookManager addressBookManager) {
         mCore = core;
         mRcsSettings = rcsSettings;
 
-        mExtensionManager = new ServiceExtensionManager(this, ctx, mCore, rcsSettings);
         mCnxManager = new ImsConnectionManager(this, ctx, mCore, rcsSettings);
         mCallManager = new CallManager(this, ctx);
 
@@ -125,10 +118,6 @@ public class ImsModule implements SipEventListener {
         mServices.put(ImsServiceType.INSTANT_MESSAGING, new InstantMessagingService(this,
                 rcsSettings, contactManager, messagingLog, historyLog, localContentResolver, ctx,
                 core));
-        mServices
-                .put(ImsServiceType.RICHCALL, new RichcallService(this, richCallHistory,
-                        contactManager, rcsSettings, mCallManager, localContentResolver,
-                        capabilityService));
         mServices.put(ImsServiceType.PRESENCE, new PresenceService(this, ctx, rcsSettings,
                 contactManager, addressBookManager));
         mServices.put(ImsServiceType.SIP, new SipService(this, contactManager, rcsSettings));
@@ -150,7 +139,6 @@ public class ImsModule implements SipEventListener {
 
         mCnxManager.initialize();
         getInstantMessagingService().initialize();
-        getRichcallService().initialize();
         getPresenceService().initialize();
 
         mInitializationFinished = true;
@@ -212,7 +200,6 @@ public class ImsModule implements SipEventListener {
             sLogger.info("Start the IMS module");
         }
         mCnxManager.start();
-        mExtensionManager.start();
         mServiceDispatcher.start();
         mCallManager.start();
         if (sLogger.isActivated()) {
@@ -234,7 +221,6 @@ public class ImsModule implements SipEventListener {
         mCallManager.stop();
         mCnxManager.terminate();
         mServiceDispatcher.terminate();
-        mExtensionManager.stop();
         if (sLogger.isActivated()) {
             sLogger.info("IMS module has been stopped");
         }
@@ -343,15 +329,6 @@ public class ImsModule implements SipEventListener {
     }
 
     /**
-     * Returns the rich call service
-     * 
-     * @return Richcall service
-     */
-    public RichcallService getRichcallService() {
-        return (RichcallService) mServices.get(ImsServiceType.RICHCALL);
-    }
-
-    /**
      * Returns the presence service
      * 
      * @return Presence service
@@ -456,14 +433,5 @@ public class ImsModule implements SipEventListener {
      */
     public static void setImsUserProfile(UserProfile profile) {
         sImsUserProfile = profile;
-    }
-
-    /**
-     * Return the extension manager
-     *
-     * @return Extension manager
-     */
-    public ServiceExtensionManager getExtensionManager() {
-        return mExtensionManager;
     }
 }

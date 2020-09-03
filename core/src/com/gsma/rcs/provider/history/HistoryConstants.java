@@ -24,12 +24,6 @@ import com.gsma.rcs.provider.messaging.GroupChatData;
 import com.gsma.rcs.provider.messaging.GroupDeliveryInfoProvider;
 import com.gsma.rcs.provider.messaging.MessageData;
 import com.gsma.rcs.provider.settings.RcsSettingsProvider;
-import com.gsma.rcs.provider.sharing.GeolocSharingData;
-import com.gsma.rcs.provider.sharing.GeolocSharingProvider;
-import com.gsma.rcs.provider.sharing.ImageSharingData;
-import com.gsma.rcs.provider.sharing.ImageSharingProvider;
-import com.gsma.rcs.provider.sharing.VideoSharingData;
-import com.gsma.rcs.provider.sharing.VideoSharingProvider;
 import com.gsma.services.rcs.chat.ChatLog;
 import com.gsma.services.rcs.filetransfer.FileTransferLog;
 import com.gsma.services.rcs.sharing.geoloc.GeolocSharingLog;
@@ -76,9 +70,6 @@ import java.util.Set;
         internalMemberIds.add(GroupChatData.HISTORYLOG_MEMBER_ID);
         internalMemberIds.add(MessageData.HISTORYLOG_MEMBER_ID);
         internalMemberIds.add(FileTransferData.HISTORYLOG_MEMBER_ID);
-        internalMemberIds.add(ImageSharingData.HISTORYLOG_MEMBER_ID);
-        internalMemberIds.add(VideoSharingData.HISTORYLOG_MEMBER_ID);
-        internalMemberIds.add(GeolocSharingData.HISTORYLOG_MEMBER_ID);
         return internalMemberIds;
     }
 
@@ -93,15 +84,6 @@ import java.util.Set;
         internalMembers.add(new HistoryMemberDatabase(FileTransferData.HISTORYLOG_MEMBER_ID,
                 FileTransferData.CONTENT_URI, FileTransferProvider.DATABASE_NAME, null,
                 FileTransferProvider.TABLE, getFileTransferProviderColumnMapping()));
-        internalMembers.add(new HistoryMemberDatabase(ImageSharingData.HISTORYLOG_MEMBER_ID,
-                ImageSharingData.CONTENT_URI, ImageSharingProvider.DATABASE_NAME, null,
-                ImageSharingProvider.TABLE, getImageSharingProviderColumnMapping()));
-        internalMembers.add(new HistoryMemberDatabase(VideoSharingData.HISTORYLOG_MEMBER_ID,
-                VideoSharingData.CONTENT_URI, VideoSharingProvider.DATABASE_NAME, null,
-                VideoSharingProvider.TABLE, getVideoSharingProviderColumnMapping()));
-        internalMembers.add(new HistoryMemberDatabase(GeolocSharingData.HISTORYLOG_MEMBER_ID,
-                GeolocSharingData.CONTENT_URI, GeolocSharingProvider.DATABASE_NAME, null,
-                GeolocSharingProvider.TABLE, getGeolocSharingProviderColumnMapping()));
         return internalMembers;
     }
 
@@ -172,55 +154,4 @@ import java.util.Set;
         columnMapping.put(HistoryLogData.KEY_DISPOSITION, FileTransferLog.DISPOSITION);
         return columnMapping;
     }
-
-    private static Map<String, String> getImageSharingProviderColumnMapping() {
-        Map<String, String> columnMapping = new HashMap<>();
-        columnMapping.put(HistoryLogData.KEY_PROVIDER_ID,
-                String.valueOf(ImageSharingData.HISTORYLOG_MEMBER_ID));
-        columnMapping.put(HistoryLogData.KEY_BASECOLUMN_ID, ImageSharingLog.BASECOLUMN_ID);
-        columnMapping.put(HistoryLogData.KEY_ID, ImageSharingLog.SHARING_ID);
-        columnMapping.put(HistoryLogData.KEY_MIME_TYPE, ImageSharingLog.MIME_TYPE);
-        columnMapping.put(HistoryLogData.KEY_DIRECTION, ImageSharingLog.DIRECTION);
-        columnMapping.put(HistoryLogData.KEY_CONTACT, ImageSharingLog.CONTACT);
-        columnMapping.put(HistoryLogData.KEY_TIMESTAMP, ImageSharingLog.TIMESTAMP);
-        columnMapping.put(HistoryLogData.KEY_STATUS, ImageSharingLog.STATE);
-        columnMapping.put(HistoryLogData.KEY_REASON_CODE, ImageSharingLog.REASON_CODE);
-        columnMapping.put(HistoryLogData.KEY_CONTENT, ImageSharingLog.FILE);
-        columnMapping.put(HistoryLogData.KEY_FILENAME, ImageSharingLog.FILENAME);
-        columnMapping.put(HistoryLogData.KEY_FILESIZE, ImageSharingLog.FILESIZE);
-        columnMapping.put(HistoryLogData.KEY_TRANSFERRED, ImageSharingLog.TRANSFERRED);
-        return columnMapping;
-    }
-
-    private static Map<String, String> getVideoSharingProviderColumnMapping() {
-        Map<String, String> columnMapping = new HashMap<>();
-        columnMapping.put(HistoryLogData.KEY_PROVIDER_ID,
-                String.valueOf(VideoSharingData.HISTORYLOG_MEMBER_ID));
-        columnMapping.put(HistoryLogData.KEY_BASECOLUMN_ID, VideoSharingLog.BASECOLUMN_ID);
-        columnMapping.put(HistoryLogData.KEY_ID, VideoSharingLog.SHARING_ID);
-        columnMapping.put(HistoryLogData.KEY_DIRECTION, VideoSharingLog.DIRECTION);
-        columnMapping.put(HistoryLogData.KEY_CONTACT, VideoSharingLog.CONTACT);
-        columnMapping.put(HistoryLogData.KEY_TIMESTAMP, VideoSharingLog.TIMESTAMP);
-        columnMapping.put(HistoryLogData.KEY_STATUS, VideoSharingLog.STATE);
-        columnMapping.put(HistoryLogData.KEY_REASON_CODE, VideoSharingLog.REASON_CODE);
-        columnMapping.put(HistoryLogData.KEY_DURATION, VideoSharingLog.DURATION);
-        return columnMapping;
-    }
-
-    private static Map<String, String> getGeolocSharingProviderColumnMapping() {
-        Map<String, String> columnMapping = new HashMap<>();
-        columnMapping.put(HistoryLogData.KEY_PROVIDER_ID,
-                String.valueOf(GeolocSharingData.HISTORYLOG_MEMBER_ID));
-        columnMapping.put(HistoryLogData.KEY_BASECOLUMN_ID, GeolocSharingLog.BASECOLUMN_ID);
-        columnMapping.put(HistoryLogData.KEY_ID, GeolocSharingLog.SHARING_ID);
-        columnMapping.put(HistoryLogData.KEY_DIRECTION, GeolocSharingLog.DIRECTION);
-        columnMapping.put(HistoryLogData.KEY_CONTACT, GeolocSharingLog.CONTACT);
-        columnMapping.put(HistoryLogData.KEY_TIMESTAMP, GeolocSharingLog.TIMESTAMP);
-        columnMapping.put(HistoryLogData.KEY_STATUS, GeolocSharingLog.STATE);
-        columnMapping.put(HistoryLogData.KEY_REASON_CODE, GeolocSharingLog.REASON_CODE);
-        columnMapping.put(HistoryLogData.KEY_MIME_TYPE, GeolocSharingLog.MIME_TYPE);
-        columnMapping.put(HistoryLogData.KEY_CONTENT, GeolocSharingLog.CONTENT);
-        return columnMapping;
-    }
-
 }

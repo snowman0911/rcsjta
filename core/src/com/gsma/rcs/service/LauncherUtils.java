@@ -31,7 +31,6 @@ import com.gsma.rcs.provider.contact.ContactManager;
 import com.gsma.rcs.provider.messaging.MessagingLog;
 import com.gsma.rcs.provider.settings.RcsSettings;
 import com.gsma.rcs.provider.settings.RcsSettingsData.TermsAndConditionsResponse;
-import com.gsma.rcs.provider.sharing.RichCallHistory;
 import com.gsma.rcs.provisioning.ProvisioningInfo;
 import com.gsma.rcs.provisioning.https.HttpsProvisioningService;
 import com.gsma.rcs.utils.logger.Logger;
@@ -178,10 +177,6 @@ public class LauncherUtils {
 
         /* Clear all entries in chat, message and file transfer tables */
         mMessagingLog.deleteAllEntries();
-
-        /* Clear all entries in Rich Call tables (image and video) */
-        RichCallHistory.getInstance(localContentResolver);
-        RichCallHistory.getInstance().deleteAllEntries();
 
         /*
          * Clean the previous account RCS databases : because they may not be overwritten in the

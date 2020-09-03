@@ -23,7 +23,6 @@
 package com.gsma.rcs.core.ims.service.capability;
 
 import com.gsma.rcs.core.Core;
-import com.gsma.rcs.core.ims.service.extension.ServiceExtensionManager;
 import com.gsma.rcs.utils.logger.Logger;
 import com.gsma.services.rcs.capability.CapabilityService;
 
@@ -45,12 +44,9 @@ public class ExternalCapabilityMonitoring extends BroadcastReceiver {
     private final static Logger sLogger = Logger.getLogger(ExternalCapabilityMonitoring.class
             .getSimpleName());
 
-    private ServiceExtensionManager mExtensionManager;
-
     private final Core mCore;
 
-    public ExternalCapabilityMonitoring(Core core, ServiceExtensionManager extensionManager) {
-        mExtensionManager = extensionManager;
+    public ExternalCapabilityMonitoring(Core core) {
         mCore = core;
     }
 
@@ -87,13 +83,11 @@ public class ExternalCapabilityMonitoring extends BroadcastReceiver {
                             sLogger.debug(new StringBuilder("Add extensions ").append(exts)
                                     .append(" for application ").append(uid).toString());
                         }
-                        mExtensionManager.addNewSupportedExtensions();
                     } else if (Intent.ACTION_PACKAGE_REMOVED.equals(action)) {
                         if (sLogger.isActivated()) {
                             sLogger.debug(new StringBuilder("Remove extensions for application ")
                                     .append(uid).append("with action ").append(action).toString());
                         }
-                        mExtensionManager.removeSupportedExtensions();
                     }
                 } catch (NameNotFoundException e) {
                     sLogger.error(

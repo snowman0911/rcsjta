@@ -185,11 +185,9 @@ public class ContactServiceImpl extends IContactService.Stub {
         if (capabilities == null) {
             return null;
         }
-        return new Capabilities(capabilities.isImageSharingSupported(),
-                capabilities.isVideoSharingSupported(), capabilities.isImSessionSupported(),
+        return new Capabilities(capabilities.isImSessionSupported(),
                 capabilities.isFileTransferMsrpSupported()
                         || capabilities.isFileTransferHttpSupported(),
-                capabilities.isGeolocationPushSupported(), capabilities.getSupportedExtensions(),
                 capabilities.isSipAutomata(), capabilities.getTimestampOfLastResponse());
     }
 
@@ -328,18 +326,6 @@ public class ContactServiceImpl extends IContactService.Stub {
 
                 @Override
                 public boolean inScope(ContactInfo contactInfo) {
-                    com.gsma.rcs.core.ims.service.capability.Capabilities capabilities = contactInfo
-                            .getCapabilities();
-                    if (capabilities != null) {
-                        Set<String> supportedExtensions = capabilities.getSupportedExtensions();
-                        if (supportedExtensions != null) {
-                            for (String supportedExtension : supportedExtensions) {
-                                if (supportedExtension.equals(serviceId)) {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
                     return false;
                 }
             });

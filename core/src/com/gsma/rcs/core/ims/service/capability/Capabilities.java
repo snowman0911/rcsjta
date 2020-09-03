@@ -34,17 +34,12 @@ public class Capabilities {
      */
     public static final long INVALID_TIMESTAMP = -1;
 
-    private final boolean mImageSharing;
-    private final boolean mVideoSharing;
-    private final boolean mIpVoiceCall;
-    private final boolean mIpVideoCall;
     private final boolean mImSession;
     private final boolean mFileTransferMsrp;
     private final boolean mCsVideo;
     private final boolean mPresenceDiscovery;
     private final boolean mSocialPresence;
     private final boolean mFileTransferHttp;
-    private final boolean mGeolocationPush;
     private final boolean mFileTransferThumbnail;
     private final boolean mFileTransferStoreForward;
     private final boolean mGroupChatStoreForward;
@@ -52,11 +47,6 @@ public class Capabilities {
      * SIP automata (@see RFC 3840)
      */
     private final boolean mSipAutomata;
-
-    /**
-     * Set of supported extensions
-     */
-    private final Set<String> mExtensions;
 
     /**
      * Last timestamp capabilities was requested
@@ -75,60 +65,18 @@ public class Capabilities {
             .build();
 
     private Capabilities(CapabilitiesBuilder builder) {
-        mImageSharing = builder.mImageSharing;
-        mVideoSharing = builder.mVideoSharing;
-        mIpVoiceCall = builder.mIpVoiceCall;
-        mIpVideoCall = builder.mIpVideoCall;
         mImSession = builder.mImSession;
         mFileTransferMsrp = builder.mFileTransferMsrp;
         mCsVideo = builder.mCsVideo;
         mPresenceDiscovery = builder.mPresenceDiscovery;
         mSocialPresence = builder.mSocialPresence;
         mFileTransferHttp = builder.mFileTransferHttp;
-        mGeolocationPush = builder.mGeolocationPush;
         mFileTransferThumbnail = builder.mFileTransferThumbnail;
         mFileTransferStoreForward = builder.mFileTransferStoreForward;
         mGroupChatStoreForward = builder.mGroupChatStoreForward;
         mSipAutomata = builder.mSipAutomata;
         mTimestampOfLastRequest = builder.mTimestampOfLastRequest;
         mTimestampOfLastResponse = builder.mTimestampOfLastResponse;
-        mExtensions = new HashSet<>(builder.mExtensions);
-    }
-
-    /**
-     * Is image sharing supported
-     * 
-     * @return Boolean
-     */
-    public boolean isImageSharingSupported() {
-        return mImageSharing;
-    }
-
-    /**
-     * Is video sharing supported
-     * 
-     * @return Boolean
-     */
-    public boolean isVideoSharingSupported() {
-        return mVideoSharing;
-    }
-
-    /**
-     * Is IP voice call supported
-     * 
-     * @return Boolean
-     */
-    public boolean isIPVoiceCallSupported() {
-        return mIpVoiceCall;
-    }
-
-    /**
-     * Is IP video call supported
-     * 
-     * @return Boolean
-     */
-    public boolean isIPVideoCallSupported() {
-        return mIpVideoCall;
     }
 
     /**
@@ -185,14 +133,6 @@ public class Capabilities {
         return mFileTransferHttp;
     }
 
-    /**
-     * Is Geolocation Push supported
-     * 
-     * @return Boolean
-     */
-    public boolean isGeolocationPushSupported() {
-        return mGeolocationPush;
-    }
 
     /**
      * Is file transfer thumbnail supported
@@ -231,15 +171,6 @@ public class Capabilities {
     }
 
     /**
-     * Get set of supported extensions
-     * 
-     * @return List
-     */
-    public Set<String> getSupportedExtensions() {
-        return mExtensions;
-    }
-
-    /**
      * Get timestamp of last request
      * 
      * @return timetampOfLastRequest (in milliseconds)
@@ -252,17 +183,13 @@ public class Capabilities {
     @Override
     public String toString() {
         return "Caps{" +
-                "ImageShare=" + mImageSharing +
-                ", VideoSharing=" + mVideoSharing +
-                ", IM=" + mImSession +
+                "IM=" + mImSession +
                 ", FtMsrp=" + mFileTransferMsrp +
                 ", FtHttp=" + mFileTransferHttp +
-                ", GeoPush=" + mGeolocationPush +
                 ", FtThumbnail=" + mFileTransferThumbnail +
                 ", FtSF=" + mFileTransferStoreForward +
                 ", GcSF=" + mGroupChatStoreForward +
                 ", SipAutomata=" + mSipAutomata +
-                ", Exts=" + mExtensions +
                 ", TimeOfLastRequest=" + mTimestampOfLastRequest +
                 ", TimeOfLastResponse=" + mTimestampOfLastResponse +
                 '}';
@@ -283,8 +210,6 @@ public class Capabilities {
         Capabilities other = (Capabilities) obj;
         if (mCsVideo != other.mCsVideo)
             return false;
-        if (!mExtensions.equals(other.mExtensions))
-            return false;
         if (mFileTransferMsrp != other.mFileTransferMsrp)
             return false;
         if (mFileTransferHttp != other.mFileTransferHttp)
@@ -293,17 +218,9 @@ public class Capabilities {
             return false;
         if (mFileTransferThumbnail != other.mFileTransferThumbnail)
             return false;
-        if (mGeolocationPush != other.mGeolocationPush)
-            return false;
         if (mGroupChatStoreForward != other.mGroupChatStoreForward)
             return false;
         if (mImSession != other.mImSession)
-            return false;
-        if (mImageSharing != other.mImageSharing)
-            return false;
-        if (mIpVideoCall != other.mIpVideoCall)
-            return false;
-        if (mIpVoiceCall != other.mIpVoiceCall)
             return false;
         if (mPresenceDiscovery != other.mPresenceDiscovery)
             return false;
@@ -311,7 +228,7 @@ public class Capabilities {
             return false;
         if (mSocialPresence != other.mSocialPresence)
             return false;
-        return mVideoSharing == other.mVideoSharing;
+        return true;
     }
 
     @Override
@@ -319,21 +236,15 @@ public class Capabilities {
         final int prime = 31;
         int result = 1;
         result = prime * result + (mCsVideo ? 1231 : 1237);
-        result = prime * result + (mExtensions.hashCode());
         result = prime * result + (mFileTransferHttp ? 1231 : 1237);
         result = prime * result + (mFileTransferMsrp ? 1231 : 1237);
         result = prime * result + (mFileTransferStoreForward ? 1231 : 1237);
         result = prime * result + (mFileTransferThumbnail ? 1231 : 1237);
-        result = prime * result + (mGeolocationPush ? 1231 : 1237);
         result = prime * result + (mGroupChatStoreForward ? 1231 : 1237);
         result = prime * result + (mImSession ? 1231 : 1237);
-        result = prime * result + (mImageSharing ? 1231 : 1237);
-        result = prime * result + (mIpVideoCall ? 1231 : 1237);
-        result = prime * result + (mIpVoiceCall ? 1231 : 1237);
         result = prime * result + (mPresenceDiscovery ? 1231 : 1237);
         result = prime * result + (mSipAutomata ? 1231 : 1237);
         result = prime * result + (mSocialPresence ? 1231 : 1237);
-        result = prime * result + (mVideoSharing ? 1231 : 1237);
         return result;
     }
 
@@ -350,22 +261,16 @@ public class Capabilities {
      * Capabilities builder class
      */
     public static class CapabilitiesBuilder {
-        private boolean mImageSharing = false;
-        private boolean mVideoSharing = false;
-        private boolean mIpVoiceCall = false;
-        private boolean mIpVideoCall = false;
         private boolean mImSession = false;
         private boolean mFileTransferMsrp = false;
         private boolean mCsVideo = false;
         private boolean mPresenceDiscovery = false;
         private boolean mSocialPresence = false;
         private boolean mFileTransferHttp = false;
-        private boolean mGeolocationPush = false;
         private boolean mFileTransferThumbnail = false;
         private boolean mFileTransferStoreForward = false;
         private boolean mGroupChatStoreForward = false;
         private boolean mSipAutomata = false;
-        private Set<String> mExtensions = new HashSet<>();
         private long mTimestampOfLastRequest = INVALID_TIMESTAMP;
         private long mTimestampOfLastResponse = INVALID_TIMESTAMP;
 
@@ -381,104 +286,18 @@ public class Capabilities {
          * @param capabilities to copy or null if construct with default values
          */
         public CapabilitiesBuilder(Capabilities capabilities) {
-            mImageSharing = capabilities.isImageSharingSupported();
-            mVideoSharing = capabilities.isVideoSharingSupported();
-            mIpVoiceCall = capabilities.isIPVoiceCallSupported();
-            mIpVideoCall = capabilities.isIPVideoCallSupported();
             mImSession = capabilities.isImSessionSupported();
             mFileTransferMsrp = capabilities.isFileTransferMsrpSupported();
             mCsVideo = capabilities.isCsVideoSupported();
             mPresenceDiscovery = capabilities.isPresenceDiscoverySupported();
             mSocialPresence = capabilities.isSocialPresenceSupported();
             mFileTransferHttp = capabilities.isFileTransferHttpSupported();
-            mGeolocationPush = capabilities.isGeolocationPushSupported();
             mFileTransferThumbnail = capabilities.isFileTransferThumbnailSupported();
             mFileTransferStoreForward = capabilities.isFileTransferStoreForwardSupported();
             mGroupChatStoreForward = capabilities.isGroupChatStoreForwardSupported();
             mSipAutomata = capabilities.isSipAutomata();
             mTimestampOfLastRequest = capabilities.getTimestampOfLastRequest();
             mTimestampOfLastResponse = capabilities.getTimestampOfLastResponse();
-            mExtensions = new HashSet<>(capabilities.getSupportedExtensions());
-        }
-
-        /**
-         * Sets image sharing support
-         * 
-         * @param support the image sharing support
-         * @return the current instance
-         */
-        public CapabilitiesBuilder setImageSharing(boolean support) {
-            mImageSharing = support;
-            return this;
-        }
-
-        /**
-         * Is video sharing supported
-         * 
-         * @return Boolean
-         */
-        public boolean isImageSharingSupported() {
-            return mImageSharing;
-        }
-
-        /**
-         * Sets video sharing support
-         * 
-         * @param support the video sharing support
-         * @return the current instance
-         */
-        public CapabilitiesBuilder setVideoSharing(boolean support) {
-            mVideoSharing = support;
-            return this;
-        }
-
-        /**
-         * Is video sharing supported
-         * 
-         * @return Boolean
-         */
-        public boolean isVideoSharingSupported() {
-            return mVideoSharing;
-        }
-
-        /**
-         * Sets IP voice call support
-         * 
-         * @param support the IP voice call support
-         * @return the current instance
-         */
-        public CapabilitiesBuilder setIpVoiceCall(boolean support) {
-            mIpVoiceCall = support;
-            return this;
-        }
-
-        /**
-         * Is IP voice call supported
-         * 
-         * @return Boolean
-         */
-        public boolean isIPVoiceCallSupported() {
-            return mIpVoiceCall;
-        }
-
-        /**
-         * Sets IP video call support
-         * 
-         * @param support the IP video call support
-         * @return the current instance
-         */
-        public CapabilitiesBuilder setIpVideoCall(boolean support) {
-            mIpVideoCall = support;
-            return this;
-        }
-
-        /**
-         * Is IP video call supported
-         * 
-         * @return Boolean
-         */
-        public boolean isIPVideoCallSupported() {
-            return mIpVideoCall;
         }
 
         /**
@@ -602,26 +421,6 @@ public class Capabilities {
         }
 
         /**
-         * Sets Geolocation Push support
-         * 
-         * @param support the Geolocation Push support
-         * @return the current instance
-         */
-        public CapabilitiesBuilder setGeolocationPush(boolean support) {
-            mGeolocationPush = support;
-            return this;
-        }
-
-        /**
-         * Is Geolocation Push supported
-         * 
-         * @return Boolean
-         */
-        public boolean isGeolocationPushSupported() {
-            return mGeolocationPush;
-        }
-
-        /**
          * Sets File Transfer Thumbnail support
          * 
          * @param support the File Transfer Thumbnail support
@@ -699,28 +498,6 @@ public class Capabilities {
          */
         public boolean isSipAutomata() {
             return mSipAutomata;
-        }
-
-        /**
-         * Sets extensions
-         * 
-         * @param extensions the supported extensions
-         * @return the current instance
-         */
-        public CapabilitiesBuilder setExtensions(Set<String> extensions) {
-            mExtensions = extensions;
-            return this;
-        }
-
-        /**
-         * Add extension
-         * 
-         * @param extension the extension to add
-         * @return the current instance
-         */
-        public CapabilitiesBuilder addExtension(String extension) {
-            mExtensions.add(extension);
-            return this;
         }
 
         /**

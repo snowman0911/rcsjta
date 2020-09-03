@@ -30,7 +30,6 @@ import com.gsma.rcs.core.ims.protocol.PayloadException;
 import com.gsma.rcs.core.ims.security.cert.KeyStoreManager;
 import com.gsma.rcs.core.ims.service.capability.CapabilityService;
 import com.gsma.rcs.core.ims.service.im.InstantMessagingService;
-import com.gsma.rcs.core.ims.service.richcall.RichcallService;
 import com.gsma.rcs.core.ims.service.sip.SipService;
 import com.gsma.rcs.provider.LocalContentResolver;
 import com.gsma.rcs.provider.contact.ContactManager;
@@ -38,7 +37,6 @@ import com.gsma.rcs.provider.contact.ContactManagerException;
 import com.gsma.rcs.provider.history.HistoryLog;
 import com.gsma.rcs.provider.messaging.MessagingLog;
 import com.gsma.rcs.provider.settings.RcsSettings;
-import com.gsma.rcs.provider.sharing.RichCallHistory;
 import com.gsma.rcs.utils.DeviceUtils;
 import com.gsma.rcs.utils.PhoneUtils;
 import com.gsma.rcs.utils.logger.Logger;
@@ -105,15 +103,14 @@ public class Core {
      * @param contactManager The contact manager
      * @param messagingLog The messaging log accessor
      * @param historyLog The history log accessor
-     * @param richCallHistory The richcall log accessor
      * @return Core instance
      * @throws IOException
      * @throws KeyStoreException
      */
     public static Core createCore(Context ctx, CoreListener listener, RcsSettings rcsSettings,
             ContentResolver contentResolver, LocalContentResolver localContentResolver,
-            ContactManager contactManager, MessagingLog messagingLog, HistoryLog historyLog,
-            RichCallHistory richCallHistory) throws IOException, KeyStoreException {
+            ContactManager contactManager, MessagingLog messagingLog, HistoryLog historyLog)
+            throws IOException, KeyStoreException {
         if (sInstance != null) {
             return sInstance;
         }
@@ -121,7 +118,7 @@ public class Core {
             if (sInstance == null) {
                 KeyStoreManager.loadKeyStore(rcsSettings);
                 sInstance = new Core(ctx, listener, contentResolver, localContentResolver,
-                        rcsSettings, contactManager, messagingLog, historyLog, richCallHistory);
+                        rcsSettings, contactManager, messagingLog, historyLog);
             }
         }
         return sInstance;
@@ -154,12 +151,10 @@ public class Core {
      * @param contactManager The contact manager
      * @param messagingLog The messaging log accessor
      * @param historyLog The history log accessor
-     * @param richCallHistory The richcall log accessor
      */
     private Core(Context ctx, CoreListener listener, ContentResolver contentResolver,
             LocalContentResolver localContentResolver, RcsSettings rcsSettings,
-            ContactManager contactManager, MessagingLog messagingLog, HistoryLog historyLog,
-            RichCallHistory richCallHistory) {
+            ContactManager contactManager, MessagingLog messagingLog, HistoryLog historyLog) {
         boolean logActivated = sLogger.isActivated();
         if (logActivated) {
             sLogger.info("Terminal core initialization");
@@ -173,7 +168,7 @@ public class Core {
         mLocaleManager = new LocaleManager(ctx, this, rcsSettings, contactManager);
 
         mImsModule = new ImsModule(this, ctx, localContentResolver, rcsSettings, contactManager,
-                messagingLog, historyLog, richCallHistory, mAddressBookManager);
+                messagingLog, historyLog, mAddressBookManager);
         if (logActivated) {
             sLogger.info("Terminal core is created with success");
         }
@@ -282,15 +277,6 @@ public class Core {
      */
     public CapabilityService getCapabilityService() {
         return getImsModule().getCapabilityService();
-    }
-
-    /**
-     * Returns the richcall service
-     * 
-     * @return Rich call service
-     */
-    public RichcallService getRichcallService() {
-        return getImsModule().getRichcallService();
     }
 
     /**

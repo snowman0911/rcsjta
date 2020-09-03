@@ -63,10 +63,6 @@ public abstract class ImsService {
          */
         IPCALL,
         /**
-         * Richcall service
-         */
-        RICHCALL,
-        /**
          * Presence service
          */
         PRESENCE,

@@ -329,15 +329,11 @@ public class CapabilityService extends ImsService implements AddressBookEventLis
             throws PayloadException, NetworkException, ContactManagerException {
         try {
             Capabilities capabilities = mContactManager.getContactCapabilities(contact);
-            if (capabilities == null
-                    || (!capabilities.isImageSharingSupported() && !capabilities
-                            .isVideoSharingSupported())) {
+            if (capabilities == null) {
                 return;
             }
             CapabilitiesBuilder capaBuilder = new CapabilitiesBuilder(capabilities);
             /* Force a reset of content sharing capabilities */
-            capaBuilder.setImageSharing(false);
-            capaBuilder.setVideoSharing(false);
             capabilities = capaBuilder.build();
             mContactManager.setContactCapabilities(contact, capabilities);
 

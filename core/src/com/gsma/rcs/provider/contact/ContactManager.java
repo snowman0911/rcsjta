@@ -74,7 +74,6 @@ import com.gsma.rcs.core.ims.service.ContactInfo.RcsStatus;
 import com.gsma.rcs.core.ims.service.ContactInfo.RegistrationState;
 import com.gsma.rcs.core.ims.service.capability.Capabilities;
 import com.gsma.rcs.core.ims.service.capability.Capabilities.CapabilitiesBuilder;
-import com.gsma.rcs.core.ims.service.extension.ServiceExtensionManager;
 import com.gsma.rcs.core.ims.service.presence.FavoriteLink;
 import com.gsma.rcs.core.ims.service.presence.Geoloc;
 import com.gsma.rcs.core.ims.service.presence.PhotoIcon;
@@ -518,20 +517,13 @@ public final class ContactManager {
         Capabilities newCapa = newInfo.getCapabilities();
         values.put(KEY_CAPABILITY_CS_VIDEO, newCapa.isCsVideoSupported());
         values.put(KEY_CAPABILITY_FILE_TRANSFER, newCapa.isFileTransferMsrpSupported());
-        values.put(KEY_CAPABILITY_IMAGE_SHARE, newCapa.isImageSharingSupported());
         values.put(KEY_CAPABILITY_IM_SESSION, newCapa.isImSessionSupported());
-        values.put(KEY_CAPABILITY_VIDEO_SHARE, newCapa.isVideoSharingSupported());
-        values.put(KEY_CAPABILITY_GEOLOC_PUSH, newCapa.isGeolocationPushSupported());
         values.put(KEY_CAPABILITY_FILE_TRANSFER_HTTP, newCapa.isFileTransferHttpSupported());
         values.put(KEY_CAPABILITY_FILE_TRANSFER_THUMBNAIL,
                 newCapa.isFileTransferThumbnailSupported());
-        values.put(KEY_CAPABILITY_IP_VOICE_CALL, newCapa.isIPVoiceCallSupported());
-        values.put(KEY_CAPABILITY_IP_VIDEO_CALL, newCapa.isIPVideoCallSupported());
         values.put(KEY_CAPABILITY_FILE_TRANSFER_SF, newCapa.isFileTransferStoreForwardSupported());
         values.put(KEY_AUTOMATA, newCapa.isSipAutomata());
         values.put(KEY_CAPABILITY_GROUP_CHAT_SF, newCapa.isGroupChatStoreForwardSupported());
-        values.put(KEY_CAPABILITY_EXTENSIONS,
-                ServiceExtensionManager.getExtensions(newCapa.getSupportedExtensions()));
         values.put(KEY_CAPABILITY_TIMESTAMP_LAST_REQUEST, newCapa.getTimestampOfLastRequest());
         values.put(KEY_CAPABILITY_TIMESTAMP_LAST_RESPONSE, newCapa.getTimestampOfLastResponse());
         values.put(KEY_CAPABILITY_PRESENCE_DISCOVERY, newCapa.isPresenceDiscoverySupported());
@@ -672,48 +664,14 @@ public final class ContactManager {
                 if (op != null) {
                     ops.add(op);
                 }
-                op = modifyMimeTypeForContact(rcsRawContactId, contact,
-                        MIMETYPE_CAPABILITY_IMAGE_SHARE, newCapa.isImageSharingSupported(),
-                        oldCapa.isImageSharingSupported());
-                if (op != null) {
-                    ops.add(op);
-                }
+
                 op = modifyMimeTypeForContact(rcsRawContactId, contact,
                         MIMETYPE_CAPABILITY_IM_SESSION, newCapa.isImSessionSupported(),
                         oldCapa.isImSessionSupported());
                 if (op != null) {
                     ops.add(op);
                 }
-                op = modifyMimeTypeForContact(rcsRawContactId, contact,
-                        MIMETYPE_CAPABILITY_VIDEO_SHARE, newCapa.isVideoSharingSupported(),
-                        oldCapa.isVideoSharingSupported());
-                if (op != null) {
-                    ops.add(op);
-                }
-                op = modifyMimeTypeForContact(rcsRawContactId, contact,
-                        MIMETYPE_CAPABILITY_IP_VOICE_CALL, newCapa.isIPVoiceCallSupported(),
-                        oldCapa.isIPVoiceCallSupported());
-                if (op != null) {
-                    ops.add(op);
-                }
-                op = modifyMimeTypeForContact(rcsRawContactId, contact,
-                        MIMETYPE_CAPABILITY_IP_VIDEO_CALL, newCapa.isIPVideoCallSupported(),
-                        oldCapa.isIPVideoCallSupported());
-                if (op != null) {
-                    ops.add(op);
-                }
-                op = modifyMimeTypeForContact(rcsRawContactId, contact,
-                        MIMETYPE_CAPABILITY_GEOLOCATION_PUSH, newCapa.isGeolocationPushSupported(),
-                        oldCapa.isGeolocationPushSupported());
-                if (op != null) {
-                    ops.add(op);
-                }
-                /* Modify the RCS extensions */
-                op = modifyExtensionsCapabilityForContact(rcsRawContactId, contact,
-                        newCapa.getSupportedExtensions(), oldCapa.getSupportedExtensions());
-                if (op != null) {
-                    ops.add(op);
-                }
+
                 /* Modify the Blocking state */
                 op = modifyBlockingStateForContact(rcsRawContactId, contact,
                         newInfo.getBlockingState(), oldInfo.getBlockingState());
@@ -870,32 +828,20 @@ public final class ContactManager {
                 capaBuilder.setCsVideo(isCapabilitySupported(cursor, KEY_CAPABILITY_CS_VIDEO));
                 capaBuilder.setFileTransferMsrp(isCapabilitySupported(cursor,
                         KEY_CAPABILITY_FILE_TRANSFER));
-                capaBuilder.setImageSharing(isCapabilitySupported(cursor,
-                        KEY_CAPABILITY_IMAGE_SHARE));
                 capaBuilder.setImSession(isCapabilitySupported(cursor, KEY_CAPABILITY_IM_SESSION));
                 capaBuilder.setPresenceDiscovery(isCapabilitySupported(cursor,
                         KEY_CAPABILITY_PRESENCE_DISCOVERY));
                 capaBuilder.setSocialPresence(isCapabilitySupported(cursor,
                         KEY_CAPABILITY_SOCIAL_PRESENCE));
-                capaBuilder.setGeolocationPush(isCapabilitySupported(cursor,
-                        KEY_CAPABILITY_GEOLOC_PUSH));
-                capaBuilder.setVideoSharing(isCapabilitySupported(cursor,
-                        KEY_CAPABILITY_VIDEO_SHARE));
                 capaBuilder.setFileTransferThumbnail(isCapabilitySupported(cursor,
                         KEY_CAPABILITY_FILE_TRANSFER_THUMBNAIL));
                 capaBuilder.setFileTransferHttp(isCapabilitySupported(cursor,
                         KEY_CAPABILITY_FILE_TRANSFER_HTTP));
-                capaBuilder.setIpVoiceCall(isCapabilitySupported(cursor,
-                        KEY_CAPABILITY_IP_VOICE_CALL));
-                capaBuilder.setIpVideoCall(isCapabilitySupported(cursor,
-                        KEY_CAPABILITY_IP_VIDEO_CALL));
                 capaBuilder.setFileTransferStoreForward(isCapabilitySupported(cursor,
                         KEY_CAPABILITY_FILE_TRANSFER_SF));
                 capaBuilder.setGroupChatStoreForward(isCapabilitySupported(cursor,
                         KEY_CAPABILITY_GROUP_CHAT_SF));
                 capaBuilder.setSipAutomata(isCapabilitySupported(cursor, KEY_AUTOMATA));
-                capaBuilder.setExtensions(ServiceExtensionManager.getExtensions(cursor
-                        .getString(cursor.getColumnIndexOrThrow(KEY_CAPABILITY_EXTENSIONS))));
                 capaBuilder.setTimestampOfLastRequest(cursor.getLong(cursor
                         .getColumnIndexOrThrow(KEY_CAPABILITY_TIMESTAMP_LAST_REQUEST)));
                 capaBuilder.setTimestampOfLastResponse(cursor.getLong(cursor
@@ -1382,34 +1328,6 @@ public final class ContactManager {
     }
 
     /**
-     * Modify the RCS extensions capability for the contact
-     * 
-     * @param rawContactId Raw contact id of the RCS contact
-     * @param contact RCS number of the contact
-     * @param newExtensions New extensions capabilities
-     * @param oldExtensions Old extensions capabilities
-     * @return contentProviderOperation to be done of null if no update is required
-     */
-    private ContentProviderOperation modifyExtensionsCapabilityForContact(long rawContactId,
-            ContactId contact, Set<String> newExtensions, Set<String> oldExtensions) {
-        /* Compare the two lists of extensions */
-        if (newExtensions.containsAll(oldExtensions) && oldExtensions.containsAll(newExtensions)) {
-            /* Both lists have the same tags, no need to update */
-            return null;
-        }
-        return ContentProviderOperation
-                .newUpdate(Data.CONTENT_URI)
-                .withSelection(
-                        SEL_RAW_CONTACT_MIMETYPE_DATA1,
-                        new String[] {
-                                Long.toString(rawContactId), MIMETYPE_CAPABILITY_EXTENSIONS,
-                                contact.toString()
-                        })
-                .withValue(Data.DATA2, ServiceExtensionManager.getExtensions(newExtensions))
-                .build();
-    }
-
-    /**
      * Modify blocking state for contact
      * 
      * @param rawContactId contact id of the RCS contact
@@ -1747,16 +1665,12 @@ public final class ContactManager {
             capaBuilder.setFileTransferMsrp(capaBuilder.isFileTransferMsrpSupported()
                     && isRegistered || mRcsSettings.isFileTransferStoreForwardSupported()
                     && isRcsContact);
-            capaBuilder.setImageSharing(capaBuilder.isImageSharingSupported() && isRegistered);
             /*
              * IM session capability is enabled: - if the capability is present and the contact is
              * registered - if the IM store&forward is enabled and the contact is RCS capable.
              */
             capaBuilder.setImSession(capaBuilder.isImSessionSupported() && isRegistered
                     || mRcsSettings.isImAlwaysOn() && isRcsContact);
-            capaBuilder.setVideoSharing(capaBuilder.isVideoSharingSupported() && isRegistered);
-            capaBuilder
-                    .setGeolocationPush(capaBuilder.isGeolocationPushSupported() && isRegistered);
             capaBuilder.setFileTransferThumbnail(capaBuilder.isFileTransferThumbnailSupported()
                     && isRegistered);
             capaBuilder.setFileTransferHttp(capaBuilder.isFileTransferHttpSupported()
@@ -1767,14 +1681,9 @@ public final class ContactManager {
                     || mRcsSettings.isFtAlwaysOn() && isRcsContact);
             capaBuilder.setGroupChatStoreForward(capaBuilder.isGroupChatStoreForwardSupported()
                     && isRegistered);
-            capaBuilder.setIpVoiceCall(capaBuilder.isIPVoiceCallSupported() && isRegistered);
-            capaBuilder.setIpVideoCall(capaBuilder.isIPVideoCallSupported() && isRegistered);
             capaBuilder.setPresenceDiscovery(capaBuilder.isPresenceDiscovery() && isRegistered);
             capaBuilder.setSocialPresence(capaBuilder.isSocialPresence() && isRegistered);
-            if (!isRegistered) {
-                /* If contact is not registered, do not put any extensions */
-                capaBuilder.setExtensions(new HashSet<String>());
-            }
+
             /* Add the capabilities */
             newInfo.setCapabilities(capaBuilder.build());
             /* Do not set contact info if they are unchanged */
@@ -1831,23 +1740,11 @@ public final class ContactManager {
             if (capabilities.isFileTransferThumbnailSupported()) {
                 capBuilder.setFileTransferThumbnail(true);
             }
-            if (capabilities.isGeolocationPushSupported()) {
-                capBuilder.setGeolocationPush(true);
-            }
             if (capabilities.isGroupChatStoreForwardSupported()) {
                 capBuilder.setGroupChatStoreForward(true);
             }
             if (capabilities.isImSessionSupported()) {
                 capBuilder.setImSession(true);
-            }
-            if (capabilities.isImageSharingSupported()) {
-                capBuilder.setImageSharing(true);
-            }
-            if (capabilities.isIPVideoCallSupported()) {
-                capBuilder.setIpVideoCall(true);
-            }
-            if (capabilities.isIPVoiceCallSupported()) {
-                capBuilder.setIpVoiceCall(true);
             }
             if (capabilities.isPresenceDiscoverySupported()) {
                 capBuilder.setPresenceDiscovery(true);
@@ -1857,9 +1754,6 @@ public final class ContactManager {
             }
             if (capabilities.isSocialPresenceSupported()) {
                 capBuilder.setSocialPresence(true);
-            }
-            if (capabilities.isVideoSharingSupported()) {
-                capBuilder.setVideoSharing(true);
             }
             long timestampOfLastRequest = capabilities.getTimestampOfLastRequest();
             if (timestampOfLastRequest != Capabilities.INVALID_TIMESTAMP) {
@@ -1978,42 +1872,9 @@ public final class ContactManager {
                 ops.add(createMimeTypeForContact(rawContactRefIms, contact,
                         MIMETYPE_CAPABILITY_FILE_TRANSFER));
             }
-            if (capabilities.isImageSharingSupported()) {
-                ops.add(createMimeTypeForContact(rawContactRefIms, contact,
-                        MIMETYPE_CAPABILITY_IMAGE_SHARE));
-            }
             if (capabilities.isImSessionSupported()) {
                 ops.add(createMimeTypeForContact(rawContactRefIms, contact,
                         MIMETYPE_CAPABILITY_IM_SESSION));
-            }
-            if (capabilities.isVideoSharingSupported()) {
-                ops.add(createMimeTypeForContact(rawContactRefIms, contact,
-                        MIMETYPE_CAPABILITY_VIDEO_SHARE));
-            }
-            if (capabilities.isIPVoiceCallSupported()) {
-                ops.add(createMimeTypeForContact(rawContactRefIms, contact,
-                        MIMETYPE_CAPABILITY_IP_VOICE_CALL));
-            }
-            if (capabilities.isIPVideoCallSupported()) {
-                ops.add(createMimeTypeForContact(rawContactRefIms, contact,
-                        MIMETYPE_CAPABILITY_IP_VIDEO_CALL));
-            }
-            if (capabilities.isGeolocationPushSupported()) {
-                ops.add(createMimeTypeForContact(rawContactRefIms, contact,
-                        MIMETYPE_CAPABILITY_GEOLOCATION_PUSH));
-            }
-            /* Extensions */
-            Set<String> exts = info.getCapabilities().getSupportedExtensions();
-            if (exts.size() > 0) {
-                ops.add(ContentProviderOperation
-                        .newInsert(Data.CONTENT_URI)
-                        .withValueBackReference(Data.RAW_CONTACT_ID, rawContactRefIms)
-                        .withValue(Data.MIMETYPE, MIMETYPE_CAPABILITY_EXTENSIONS)
-                        .withValue(Data.DATA1, contactNumber)
-                        .withValue(Data.DATA2, ServiceExtensionManager.getExtensions(exts))
-                        .withValue(Data.DATA3,
-                                getMimeTypeDescriptionDetails(MIMETYPE_CAPABILITY_EXTENSIONS))
-                        .build());
             }
 
             ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
@@ -2456,35 +2317,11 @@ public final class ContactManager {
                 /* Convert mime type string to enumerated */
                 MimeType mimeType = MimeType.getMimeType(mimeTypeStr);
                 switch (mimeType) {
-                    case CAPABILITY_IMAGE_SHARE:
-                        capaBuilder.setImageSharing(true);
-                        break;
-                    case CAPABILITY_VIDEO_SHARE:
-                        capaBuilder.setVideoSharing(true);
-                        break;
-                    case CAPABILITY_IP_VOICE_CALL:
-                        capaBuilder.setIpVoiceCall(true);
-                        break;
-                    case CAPABILITY_IP_VIDEO_CALL:
-                        capaBuilder.setIpVideoCall(true);
-                        break;
                     case CAPABILITY_IM_SESSION:
                         capaBuilder.setImSession(true);
                         break;
                     case CAPABILITY_FILE_TRANSFER:
                         capaBuilder.setFileTransferMsrp(true);
-                        break;
-                    case CAPABILITY_GEOLOCATION_PUSH:
-                        capaBuilder.setGeolocationPush(true);
-                        break;
-                    case CAPABILITY_EXTENSIONS: {
-                        /* Set RCS extensions capability */
-                        int columnIndex = cursor.getColumnIndex(Data.DATA2);
-                        if (INVALID_ID != columnIndex) {
-                            capaBuilder.setExtensions(ServiceExtensionManager.getExtensions(cursor
-                                    .getString(columnIndex)));
-                        }
-                    }
                         break;
                     case REGISTRATION_STATE: {
                         /* Set registration state */

@@ -84,20 +84,6 @@ public class RegistrationUtils {
             iariTags.add(FeatureTags.FEATURE_RCSE_FT_HTTP);
         }
 
-        // Extensions
-        if (rcsSettings.isExtensionsAllowed()) {
-            for (String extension : rcsSettings.getSupportedRcsExtensions()) {
-                if (rcsSettings.isExtensionAuthorized(extension)) {
-                    if (extension.startsWith("gsma.")) {
-                        icsiTags.add(FeatureTags.FEATURE_RCSE_ICSI_EXTENSION + "." + extension);
-                    } else {
-                        iariTags.add(FeatureTags.FEATURE_RCSE_IARI_EXTENSION + "." + extension);
-                    }
-                }
-            }
-            icsiTags.add(FeatureTags.FEATURE_3GPP_EXTENSION);
-        }
-
         // Add IARI prefix
         if (!iariTags.isEmpty()) {
             tags.add(FeatureTags.FEATURE_RCSE + "=\"" + TextUtils.join(",", iariTags) + "\"");

@@ -148,13 +148,7 @@ public class AnonymousFetchManager implements DiscoveryManager {
                         state = true;
                     }
                     String id = tuple.getService().getId();
-                    if (PresenceUtils.FEATURE_RCS2_VIDEO_SHARE.equalsIgnoreCase(id)) {
-                        capaBuilder.setVideoSharing(state);
-
-                    } else if (PresenceUtils.FEATURE_RCS2_IMAGE_SHARE.equalsIgnoreCase(id)) {
-                        capaBuilder.setImageSharing(state);
-
-                    } else if (PresenceUtils.FEATURE_RCS2_FT.equalsIgnoreCase(id)) {
+                    if (PresenceUtils.FEATURE_RCS2_FT.equalsIgnoreCase(id)) {
                         capaBuilder.setFileTransferMsrp(state);
 
                     } else if (PresenceUtils.FEATURE_RCS2_CS_VIDEO.equalsIgnoreCase(id)) {
